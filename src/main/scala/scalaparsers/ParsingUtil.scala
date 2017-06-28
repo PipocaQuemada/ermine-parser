@@ -2,7 +2,6 @@ package scalaparsers
 
 import Document.{ text }
 import scalaz._
-import scalaz.Free.{ Return, suspend }
 import scalaz.Scalaz._
 import scala.collection.immutable.List
 import Diagnostic._
@@ -18,7 +17,7 @@ trait Parsing[S] {
   type ParseState = scalaparsers.ParseState[S]
 
   def unit[A](a: A): Parser[A] = new Parser[A] {
-    def apply(s: ParseState, vs: Supply) = suspend(Return(Pure(a)))
+    def apply[B >: A](s: ParseState, vs: Supply) = Free.point(Pure(a))
     override def map[B](f: A => B) = unit(f(a))
     override def flatMap[B](f: A => Parser[B]) = f(a)
   }
@@ -35,7 +34,7 @@ trait Parsing[S] {
 
   implicit def parserMonad: Monad[Parser] = new Monad[Parser] {
     def point[A](a: => A) = new Parser[A] {
-      def apply(s: ParseState, vs: Supply) = suspend(Return(Pure(a)))
+      def apply[B >: A](s: ParseState, vs: Supply) = Free.point(Pure(a))
       override def map[B](f : A => B) = pure(f(a))
     }
     override def map[A,B](m: Parser[A])(f: A => B) = m map f

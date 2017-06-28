@@ -32,7 +32,7 @@ parallelExecution := true
 
 javacOptions += "-Xlint"
 
-val scalazVersion = "7.0.6"
+val scalazVersion = "7.1.0"
 
 libraryDependencies ++= Seq(
   "org.scalaz" %% "scalaz-core" % scalazVersion,
